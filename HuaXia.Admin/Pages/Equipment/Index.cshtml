@@ -1,0 +1,140 @@
+﻿@page
+@model HuaXia.Admin.Pages.Equipment.IndexModel
+
+@{
+}
+
+<div class="layui-panel" style="padding: 20px">
+	<h2 style="margin-bottom: 20px">装备列表</h2>
+
+	<form class="layui-form layui-row layui-col-space16">
+		<div class="layui-col-md4">
+			<label class="layui-form-label">职业</label>
+			<div class="layui-input-inline">
+				<select name="playerRoleId">
+					<option value=""></option>
+					@foreach (var role in Model.PlayerRoles)
+					{
+						<option value="@role.Id">@role.Name</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="layui-col-md4">
+			<label class="layui-form-label">部位</label>
+			<div class="layui-input-inline">
+				<select name="equipmentPartId">
+					<option value=""></option>
+					@foreach (var part in Model.EquipmentParts)
+					{
+						<option value="@part.Id">@part.Name</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="layui-btn-container layui-col-xs12">
+			<div class="layui-col-md6">
+				<button class="layui-btn" lay-submit lay-filter="equipment-table-search">搜索</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+			<div class="layui-col-md6" style="text-align: right">
+				<a class="layui-btn" asp-page="Create">
+					新建
+				</a>
+			</div>
+		</div>
+	</form>
+
+
+	<table class="layui-table" lay-filter="parse-table-demo" id="equipment-table">
+	</table>
+
+</div>
+
+
+@section Scripts {
+	<script>
+
+		layui.use(function () {
+			var table = layui.table;
+			var form = layui.form;
+			var util = layui.util;
+			var $ = layui.$;
+			// 创建表格实例
+			table.render({
+				elem: '#equipment-table',
+				url: '/api/Equipment/GetList', // 此处为静态模拟数据，实际使用时需换成真实接口
+				cols: [[
+					{ type: 'radio', title: '😊', fixed: true }, // 单选框
+					{ field: 'id', title: 'ID', width: 80, fixed: true },
+					{ field: 'name', title: '名称', width: 80 },
+					{ field: 'description', title: '描述' },
+					{ field: 'equipmentPartName', title: '部位', width: 180 },
+					{ field: 'level', title: '等级', width: 180 },
+					{ field: 'playerRoleName', title: '职业', width: 180 },
+					{ field: 'image', title: '图片', width: 180, templet: `<div><img src="{{=d.image}}" with="32" height="32" /></div>` },
+					{
+						field: 'operate', title: '操作', width: 180,
+						templet: `<div>
+										<a href="/Equipment/Detail?id={{=d.id}}" class="layui-btn layui-btn-sm layui-bg-blue">编辑</a>
+										<button class="layui-btn layui-btn-sm layui-btn-danger" lay-on="delete-equipment" data-equipmentId={{=d.id}} data-equipmentName={{=d.name}}>删除</button>
+								  </div>`
+					},
+				]],
+				page: true,
+				//height: 310,
+				parseData: function (res) {
+					return {
+						"code": 0, // 解析接口状态
+						"msg": '成功', // 解析提示文本
+						"count": res.length, // 解析数据长度
+						"data": res // 解析数据列表
+					}
+				}
+			});
+			// 搜索提交
+			form.on('submit(equipment-table-search)', function (data) {
+				var field = data.field; // 获得表单字段
+				// 执行搜索重载
+				table.reload('equipment-table', {
+					page: {
+						curr: 1 // 重新从第 1 页开始
+					},
+					where: field // 搜索的字段
+				});
+				layer.msg('搜索成功');
+				return false; // 阻止默认 form 跳转
+			});
+
+			util.on('lay-on', {
+				"delete-equipment": function () {
+					const name = $(this).data('equipmentname');
+					const id = $(this).data('equipmentid');
+					layer.confirm(`是否删除装备【${name}】？`, { icon: 3 }, function () {
+
+						var index = layer.load(0);
+
+						$.ajax({
+							url: `/api/Equipment/${id}`,
+							type: 'DELETE',
+							contentType: 'application/json;charset=utf-8',
+							success: () => {
+								layer.close(index);
+								form.submit("equipment-table-search");
+							},
+							error: (error) => {
+								console.error(error);
+								layer.msg(error.msg);
+							}
+						})
+
+						layer.msg('点击确定的回调', { icon: 1 });
+					}, function () {
+						console.log('取消')
+					});
+				}
+			})
+
+		});
+	</script>
+} 

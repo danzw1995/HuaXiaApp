@@ -1,0 +1,67 @@
+﻿@page
+@model HuaXia.Web.Pages.SkillModel
+@{
+	ViewData["Title"] = "技能";
+}
+
+<h1>技能</h1>
+
+<style>
+	.role-list {
+		display: flex;
+		gap: 10px;
+		list-style: none;
+	}
+	.role-list .active {
+		color: red;
+	}
+	.role-list a {
+		color: inherit;
+	}
+</style>
+
+
+@if (Model.Roles?.Count > 0)
+{
+	<ul class="role-list">
+		@foreach(var role in Model.Roles)
+		{
+			<li class='@(role.Id == Model.RoleId ? "active" : "")'>
+				<a 
+					asp-page="/Skill" 
+					asp-route-roleid="@role.Id"
+					asp-route-searchenabled="@true"
+				>
+					@role.Name
+				</a>
+			</li>
+		}
+	</ul>
+}
+
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>名称</th>
+			<th>图鉴</th>
+			<th>等级</th>
+			<th>描述</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if(Model.Skills?.Count > 0)
+		{
+			@foreach(var skill in Model.Skills)
+			{
+				<tr>
+					<td>@skill.Name</td>
+					<td>@skill.Image</td>
+					<td>@skill.Level</td>
+					<td>@skill.Description</td>
+				</tr>
+			}
+			
+		}
+	</tbody>
+</table>

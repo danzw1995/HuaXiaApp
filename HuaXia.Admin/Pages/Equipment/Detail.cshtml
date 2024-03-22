@@ -1,0 +1,89 @@
+﻿@page
+@model HuaXia.Admin.Pages.Equipment.DetailModel
+@{
+}
+<div class="layui-panel" style="padding: 20px">
+	<h2 style="margin-bottom: 20px">编辑装备</h2>
+
+	<form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data">
+		<input hidden asp-for="Equipment.Id" />
+		<input hidden asp-for="Equipment.Image" />
+		<div class="layui-form-item">
+			<label class="layui-form-label" asp-for="Equipment.Name"></label>
+			<div class="layui-input-block">
+				<input type="text" asp-for="Equipment.Name" autocomplete="off" placeholder="请输入" class="layui-input">
+			</div>
+			<span asp-validation-for="Equipment.Name" class="text-danger" style="clear: both"></span>
+
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label" asp-for="Equipment.Description"></label>
+			<div class="layui-input-block">
+				<textarea placeholder="请输入内容" class="layui-textarea" asp-for="Equipment.Description"></textarea>
+			</div>
+			<span asp-validation-for="Equipment.Description" class="text-danger"></span>
+
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" asp-for="Equipment.PlayerRoleId"></label>
+
+			<div class="layui-input-inline">
+				<select asp-for="Equipment.PlayerRoleId">
+					<option></option>
+					@foreach (var role in Model.PlayerRoles)
+					{
+						<option value="@role.Id">@role.Name</option>
+					}
+				</select>
+			</div>
+			<div style="clear: both">
+				<span asp-validation-for="Equipment.PlayerRoleId" class="text-danger"></span>
+			</div>
+
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" asp-for="Equipment.EquipmentPartId"></label>
+			<div class="layui-input-inline">
+				<select asp-for="Equipment.EquipmentPartId">
+					<option></option>
+					@foreach (var part in Model.EquipmentParts)
+					{
+						<option value="@part.Id">@part.Name</option>
+					}
+				</select>
+			</div>
+			<div style="clear: both">
+				<span asp-validation-for="Equipment.EquipmentPartId" class="text-danger"></span>
+			</div>
+
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" asp-for="Equipment.PlayerLevelId"></label>
+			<div class="layui-input-inline">
+				<select asp-for="Equipment.PlayerLevelId">
+					<option></option>
+					@foreach (var level in Model.PlayerLevels)
+					{
+						<option value="@level.Id">@level.Level</option>
+					}
+				</select>
+			</div>
+			<div style="clear: both">
+				<span asp-validation-for="Equipment.PlayerLevelId" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">图片</label>
+			<div class="layui-input-block" style="display: flex; align-items: center; padding-left: 20px">
+				<input type="file" name="file">
+			</div>
+			<div asp-validation-summary="ModelOnly" class="text-danger" style="clear: both"></div>
+
+		</div>
+		<div class="layui-form-item">
+			<button class="layui-btn" type="submit">确认</button>
+			<a class="layui-btn btn-danger" asp-page="Index">返回</a>
+		</div>
+	</form>
+
+</div>

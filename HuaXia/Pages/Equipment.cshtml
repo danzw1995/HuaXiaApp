@@ -1,0 +1,84 @@
+﻿@page
+@model HuaXia.Web.Pages.EquipmentModel
+@{
+	ViewData["Title"] = "装备";
+}
+
+<style>
+	.role-list,
+	.equipment-part-list {
+		list-style: none;
+		display: flex;
+		gap: 10px;
+	}
+
+	.role-list a,
+	.equipment-part-list a {
+		color: inherit;
+	}
+
+	.active {
+		color: red;
+	}
+</style>
+
+<h1>装备</h1>
+
+@if (Model.PlayerRoles?.Count > 0)
+{
+	<ul class="role-list">
+		@foreach (var role in Model.PlayerRoles)
+		{
+			<li class='@(role.Id == Model.RoleId ? "active" : "")'>
+				<a asp-page="/Equipment"
+				   asp-route-equipmentpartid="@Model.EquipmentPartId"
+				   asp-route-roleid="@role.Id"
+				   asp-route-searchenabled="@true">
+					@role.Name
+				</a>
+			</li>
+		}
+	</ul>
+}
+
+@if (Model.EquipmentParts?.Count > 0)
+{
+	<ul class="equipment-part-list">
+		@foreach (var part in Model.EquipmentParts)
+		{
+			<li class='@(part.Id == Model.EquipmentPartId ? "active" : "")'>
+				<a asp-page="/Equipment"
+				   asp-route-equipmentpartid="@part.Id"
+				   asp-route-roleid="@Model.RoleId"
+				   asp-route-searchenabled="@true">
+					@part.Name
+				</a>
+			</li>
+		}
+	</ul>
+}
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>名称</th>
+			<th>图标</th>
+			<th>描述</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model.Equipments?.Count > 0)
+		{
+			@foreach (var equipment in Model.Equipments)
+			{
+				<tr>
+					<td>@equipment.Name</td>
+					<td>@equipment.Image</td>
+					<td>@equipment.Description</td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>
+
