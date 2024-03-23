@@ -37,14 +37,17 @@
 				<button class="layui-btn" lay-submit lay-filter="equipment-table-search">搜索</button>
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 			</div>
-			<div class="layui-col-md6" style="text-align: right">
-				<a class="layui-btn" asp-page="Create">
-					新建
-				</a>
-			</div>
 		</div>
 	</form>
 
+	<div style="text-align: right">
+		<a class="layui-btn" asp-page="Create">
+			新建
+		</a>
+
+		<button class="layui-btn" lay-on="import-equipment">导入</button>
+		<button class="layui-btn" lay-on="export-equipment">导出</button>
+	</div>
 
 	<table class="layui-table" lay-filter="parse-table-demo" id="equipment-table">
 	</table>
@@ -58,6 +61,7 @@
 		layui.use(function () {
 			var table = layui.table;
 			var form = layui.form;
+			var upload = layui.upload;
 			var util = layui.util;
 			var $ = layui.$;
 			// 创建表格实例
@@ -65,7 +69,6 @@
 				elem: '#equipment-table',
 				url: '/api/Equipment/GetList', // 此处为静态模拟数据，实际使用时需换成真实接口
 				cols: [[
-					{ type: 'radio', title: '😊', fixed: true }, // 单选框
 					{ field: 'id', title: 'ID', width: 80, fixed: true },
 					{ field: 'name', title: '名称', width: 80 },
 					{ field: 'description', title: '描述' },
@@ -132,6 +135,51 @@
 					}, function () {
 						console.log('取消')
 					});
+				},
+				"import-equipment": function() {
+					var importDialogIndex = layer.open({
+						type: 1,
+						area: ['420px', '240px'], // 宽高
+						content: `
+								<div class="layui-form" style="margin: 16px;" enctype="multipart/form-data">
+									<div class="demo-login-container">
+										<div class="layui-form-item">
+											<input type="file" name="file" id="file-input" />
+										</div>
+										<div class="layui-form-item">
+											<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="import-btn">导入</button>
+										</div>
+									</div>
+								</div>`,
+						success: function () {
+
+							form.on('submit(import-btn)', function (data) {
+
+								const formData = new FormData();
+								const files = $("#file-input").prop('files');
+								if (!files.length) {
+									layer.msg('请选择文件');
+									return false;
+								}
+
+								formData.append("file", files[0]);
+
+								$.ajax({
+									method: "POST",
+									url: '/api/Equipment/import',
+									data: formData,
+									processData: false,
+									contentType: false,
+									success: function () {
+										layer.close(importDialogIndex);
+										form.submit("equipment-table-search");
+									}
+								})
+								return false;
+							})
+						}
+
+					})
 				}
 			})
 

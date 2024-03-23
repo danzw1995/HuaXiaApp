@@ -2,6 +2,8 @@
 using HuaXiaLibrary.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace HuaXia.Admin.Controllers
 {
@@ -28,12 +30,74 @@ namespace HuaXia.Admin.Controllers
 
 		// DELETE: api/Equipment/id
 		[HttpDelete("{id}")]
-		public ActionResult<IEnumerable<EquipmentFullModel>> DeleteEquipment(int id)
+		public ActionResult DeleteEquipment(int id)
 		{
 
 			_db.DeleteEquipment(id);
 
 			return Ok("success");
 		}
+
+		// POST: api/Equipment/Import
+		[HttpPost("Import")]
+		public ActionResult ImportEquipment([FromForm] IFormFile file)
+		{
+
+			try
+			{
+
+				IWorkbook workbook = new XSSFWorkbook(file.OpenReadStream());
+
+				ISheet sheet = workbook.GetSheetAt(0);
+
+				List<EquipmentModel> equipments = new List<EquipmentModel>();
+
+				IRow headerRow = sheet.GetRow(0);
+
+				Dictionary<string, int> nameDict = new Dictionary<string, int>();
+				
+				for(int i =0; i < headerRow.Cells.Count; i ++)
+				{
+					string name = headerRow.GetCell(i).StringCellValue;
+
+					nameDict.Add(name, i);
+					
+				}
+
+
+				for (int i = 1; i <= sheet.LastRowNum; i ++)
+				{
+					IRow row = sheet.GetRow(i);
+
+					equipments.Add(new EquipmentModel
+					{
+						Name = row.GetCell(nameDict[nameof(EquipmentModel.Name)]).StringCellValue,
+						Description = row.GetCell(nameDict[nameof(EquipmentModel.Description)]).StringCellValue,
+						Image = row.GetCell(nameDict[nameof(EquipmentModel.Image)]).StringCellValue,
+						EquipmentPartId = (int)row.GetCell(nameDict[nameof(EquipmentModel.EquipmentPartId)]).NumericCellValue,
+						PlayerLevelId = (int)row.GetCell(nameDict[nameof(EquipmentModel.PlayerLevelId)]).NumericCellValue,
+						PlayerRoleId = (int)row.GetCell(nameDict[nameof(EquipmentModel.PlayerRoleId)]).NumericCellValue,
+					});
+
+				}
+				
+				foreach(EquipmentModel equipment in equipments)
+				{
+					_db.CreateEquipment(equipment.Name, equipment.Description, equipment.Image, equipment.PlayerRoleId, equipment.EquipmentPartId, equipment.PlayerLevelId);
+				}
+
+
+				return Ok("success");
+
+			} catch (Exception)
+			{
+				throw;
+			}
+			
+
+			
+		}
+
+
 	}
 }

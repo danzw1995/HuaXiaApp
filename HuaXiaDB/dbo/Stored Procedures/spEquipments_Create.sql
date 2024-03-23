@@ -10,6 +10,6 @@ AS
 begin
 	set nocount on;
 
-	insert dbo.Equipments(Name, Description, EquipmentPartId, PlayerLevelId, PlayerRoleId, image)
+	insert dbo.Equipments(Name, Description, EquipmentPartId, PlayerLevelId, PlayerRoleId, Image)
 	values(@name, @description, @equipmentPartId, @playerLevelId, @playerRoleId, @image)
 end
