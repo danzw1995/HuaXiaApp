@@ -29,6 +29,11 @@ namespace HuaXiaLibrary.Models
 		[Required]
 		public int PlayerRoleId { get; set; }
         public string PlayerRoleName { get; set; }
+
+		[DisplayName("档次")]
+		[Required]
+		public int EquipmentGradeId {  get; set; }
+		public int Grade { get; set; }
 		[DisplayName("图片")]
 		public string Image { get; set; }
 

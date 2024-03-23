@@ -5,45 +5,48 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HuaXia.Admin.Pages.Equipment
 {
-    public class DetailModel : PageModel
-    {
-        private readonly IDatabaseData _db;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+	public class DetailModel : PageModel
+	{
+		private readonly IDatabaseData _db;
+		private readonly IWebHostEnvironment _webHostEnvironment;
 
-        [BindProperty]
-        public EquipmentFullModel Equipment { get; set; }
+		[BindProperty]
+		public EquipmentFullModel Equipment { get; set; }
 
-        public List<PlayerRoleModel> PlayerRoles { get; set; }
+		public List<PlayerRoleModel> PlayerRoles { get; set; }
 
-        public List<EquipmentPartModel> EquipmentParts {  get; set; }
+		public List<EquipmentPartModel> EquipmentParts { get; set; }
 
-        public List<PlayerLevelModel> PlayerLevels { get; set; }
+		public List<PlayerLevelModel> PlayerLevels { get; set; }
+		public List<EquipmentGradeModel> EquipmentGrades { get; set; }
 
-        public DetailModel(IDatabaseData db, IWebHostEnvironment webHostEnvironment)
-        {
-            _db = db;
-            _webHostEnvironment = webHostEnvironment;
-        }
-        public void OnGet(int id)
-        {
-            PlayerRoles = _db.GetAllPlayerRoles();
+		public DetailModel(IDatabaseData db, IWebHostEnvironment webHostEnvironment)
+		{
+			_db = db;
+			_webHostEnvironment = webHostEnvironment;
+		}
+		public void OnGet(int id)
+		{
+			PlayerRoles = _db.GetAllPlayerRoles();
 
-            EquipmentParts = _db.GetEquipmentParts();
+			EquipmentParts = _db.GetEquipmentParts();
 
-            PlayerLevels = _db.GetPlayerLevels();
+			PlayerLevels = _db.GetPlayerLevels();
+			EquipmentGrades = _db.GetEquipmentGrades();
 
-            Equipment = _db.GetEquipmentById(id);
-        }
 
-        public IActionResult OnPost(IFormFile? file)
-        {
+			Equipment = _db.GetEquipmentById(id);
+		}
+
+		public IActionResult OnPost(IFormFile? file)
+		{
 			if (file == null && string.IsNullOrEmpty(Equipment.Image))
 			{
 				ModelState.AddModelError(String.Empty, "È±ÉÙ×°±¸Í¼Æ¬");
 			}
 
 			if (ModelState.IsValid)
-            {
+			{
 				if (!string.IsNullOrEmpty(Equipment.Image))
 				{
 					string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, Equipment.Image.TrimStart('\\'));
@@ -54,14 +57,16 @@ namespace HuaXia.Admin.Pages.Equipment
 					}
 				}
 
-				string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                string equipmentPath = Path.Combine(_webHostEnvironment.WebRootPath +  @"\images\equipments");
-                using (var fileStream  = new FileStream(Path.Combine(equipmentPath, fileName), FileMode.Create))
-                {
-                    file.CopyTo(fileStream);
-                }
-                Equipment.Image = Path.Combine(@"\images\equipments\", fileName);
-
+				if (file != null)
+				{
+					string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+					string equipmentPath = Path.Combine(_webHostEnvironment.WebRootPath + @"\images\equipments");
+					using (var fileStream = new FileStream(Path.Combine(equipmentPath, fileName), FileMode.Create))
+					{
+						file.CopyTo(fileStream);
+					}
+					Equipment.Image = Path.Combine(@"\images\equipments\", fileName);
+				}
 
 				_db.UpdateEquipment(new EquipmentModel
 				{
@@ -71,6 +76,7 @@ namespace HuaXia.Admin.Pages.Equipment
 					PlayerLevelId = Equipment.PlayerLevelId,
 					PlayerRoleId = Equipment.PlayerRoleId,
 					EquipmentPartId = Equipment.EquipmentPartId,
+					EquipmentGradeId = Equipment.EquipmentGradeId,
 					Image = Equipment.Image,
 				});
 
@@ -84,11 +90,13 @@ namespace HuaXia.Admin.Pages.Equipment
 			EquipmentParts = _db.GetEquipmentParts();
 
 			PlayerLevels = _db.GetPlayerLevels();
+			EquipmentGrades = _db.GetEquipmentGrades();
+
 			return Page();
 
 
-		
+
 
 		}
-    }
+	}
 }

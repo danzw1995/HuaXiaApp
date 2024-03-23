@@ -14,6 +14,7 @@ namespace HuaXiaLibrary.Models
 		public int EquipmentPartId { get; set; }
 		public int PlayerLevelId { get; set; }
 		public int PlayerRoleId { get; set; }
+		public int EquipmentGradeId {  get; set; }
 		public string Image { get; set; }
 	}
 }

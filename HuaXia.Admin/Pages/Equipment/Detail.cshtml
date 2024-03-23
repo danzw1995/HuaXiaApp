@@ -55,7 +55,21 @@
 			<div style="clear: both">
 				<span asp-validation-for="Equipment.EquipmentPartId" class="text-danger"></span>
 			</div>
-
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" asp-for="Equipment.EquipmentGradeId"></label>
+			<div class="layui-input-inline">
+				<select asp-for="Equipment.EquipmentGradeId">
+					<option></option>
+					@foreach (var grade in Model.EquipmentGrades)
+					{
+						<option value="@grade.Id">@grade.Grade</option>
+					}
+				</select>
+			</div>
+			<div style="clear: both">
+				<span asp-validation-for="Equipment.EquipmentGradeId" class="text-danger"></span>
+			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label" asp-for="Equipment.PlayerLevelId"></label>

@@ -5,7 +5,8 @@
 	@equipmentPartId int,
 	@playerLevelId int,
 	@playerRoleId int,
-	@image nvarchar(2000)
+	@image nvarchar(2000),
+	@equipmentGradeId int
 
 AS
 
@@ -18,6 +19,7 @@ begin
 	EquipmentPartId = @equipmentPartId,
 	PlayerLevelId = @playerLevelId,
 	PlayerRoleId = @playerRoleId,
-	Image = @image
+	Image = @image,
+	EquipmentGradeId = @equipmentGradeId
 	where Id = @id;
 end

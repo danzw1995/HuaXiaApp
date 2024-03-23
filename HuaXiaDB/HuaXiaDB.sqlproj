@@ -78,6 +78,8 @@
     <Build Include="dbo\Stored Procedures\spEquipments_Create.sql" />
     <Build Include="dbo\Stored Procedures\spEquipments_Pagination.sql" />
     <Build Include="dbo\Stored Procedures\spEquipments_Delete.sql" />
+    <Build Include="dbo\Tables\EquipmentGrades.sql" />
+    <Build Include="dbo\Stored Procedures\spEquipmentGrades_GetAll.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Publish Profiles\HuaXiaDB.publish.xml" />

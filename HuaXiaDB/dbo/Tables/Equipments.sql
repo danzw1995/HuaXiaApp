@@ -7,7 +7,9 @@
     [EquipmentPartId] INT NOT NULL, 
     [PlayerLevelId] INT NOT NULL, 
     [PlayerRoleId] INT NOT NULL, 
+    [EquipmentGradeId] INT NOT NULL, 
     CONSTRAINT [FK_Equipments_EquipmentParts] FOREIGN KEY ([EquipmentPartId]) REFERENCES [EquipmentParts]([Id]),
     CONSTRAINT [FK_Equipments_PlayerLevels] FOREIGN KEY ([PlayerLevelId]) REFERENCES [PlayerLevels]([Id]), 
     CONSTRAINT [FK_Equipments_PlayerRoles] FOREIGN KEY ([PlayerRoleId]) REFERENCES [PlayerRoles]([Id]), 
+    CONSTRAINT [FK_Equipments_EquipmentGrades] FOREIGN KEY (EquipmentGradeId) REFERENCES EquipmentGrades(Id), 
 )

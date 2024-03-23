@@ -16,6 +16,8 @@ namespace HuaXia.Admin.Pages.Equipment
 
 		public List<EquipmentPartModel> EquipmentParts { get; set; }
 
+        public List<EquipmentGradeModel> EquipmentGrades { get; set; }
+
         [BindProperty(SupportsGet = true)]
         [DisplayName("职业")]
         public int? PlayerRoleId { get; set; }
@@ -24,8 +26,12 @@ namespace HuaXia.Admin.Pages.Equipment
 		[DisplayName("部位")]
 		public int? EquipmentPartId { get; set; }
 
+		[BindProperty(SupportsGet = true)]
+		[DisplayName("档次")]
+		public int? EquipmentGradeId { get; set; }
 
-        public IndexModel(IDatabaseData db)
+
+		public IndexModel(IDatabaseData db)
         {
             _db = db;
         }
@@ -35,15 +41,10 @@ namespace HuaXia.Admin.Pages.Equipment
 
 			EquipmentParts = _db.GetEquipmentParts();
 
-
-			Equipments = _db.SearchEquipmentsByRoleAndEquipmentPart(PlayerRoleId, EquipmentPartId);
+            EquipmentGrades = _db.GetEquipmentGrades();
 
         }
 
-      /*  public IActionResult OnPost()
-        {
-            return RedirectToPage(new {  PlayerRoleId, EquipmentPartId });
-        }*/
     }
         
 }

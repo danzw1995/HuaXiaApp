@@ -8,7 +8,7 @@
 	<h2 style="margin-bottom: 20px">装备列表</h2>
 
 	<form class="layui-form layui-row layui-col-space16">
-		<div class="layui-col-md4">
+		<div class="layui-col-md3">
 			<label class="layui-form-label">职业</label>
 			<div class="layui-input-inline">
 				<select name="playerRoleId">
@@ -20,7 +20,7 @@
 				</select>
 			</div>
 		</div>
-		<div class="layui-col-md4">
+		<div class="layui-col-md3">
 			<label class="layui-form-label">部位</label>
 			<div class="layui-input-inline">
 				<select name="equipmentPartId">
@@ -28,6 +28,18 @@
 					@foreach (var part in Model.EquipmentParts)
 					{
 						<option value="@part.Id">@part.Name</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="layui-col-md3">
+			<label class="layui-form-label">档次</label>
+			<div class="layui-input-inline">
+				<select name="equipmentGradeId">
+					<option value=""></option>
+					@foreach (var part in Model.EquipmentGrades)
+					{
+						<option value="@part.Id">@part.Grade</option>
 					}
 				</select>
 			</div>
@@ -72,16 +84,17 @@
 					{ field: 'id', title: 'ID', width: 80, fixed: true },
 					{ field: 'name', title: '名称', width: 80 },
 					{ field: 'description', title: '描述' },
-					{ field: 'equipmentPartName', title: '部位', width: 180 },
-					{ field: 'level', title: '等级', width: 180 },
-					{ field: 'playerRoleName', title: '职业', width: 180 },
-					{ field: 'image', title: '图片', width: 180, templet: `<div><img src="{{=d.image}}" with="32" height="32" /></div>` },
+					{ field: 'equipmentPartName', title: '部位', width: 80 },
+					{ field: 'level', title: '等级', width: 80},
+					{ field: 'grade', title: '档次', width: 60 },
+					{ field: 'playerRoleName', title: '职业', width: 120 },
+					{ field: 'image', title: '图片', width: 80, templet: `<div><img src="{{=d.image}}" with="32" height="32" /></div>` },
 					{
 						field: 'operate', title: '操作', width: 180,
 						templet: `<div>
-										<a href="/Equipment/Detail?id={{=d.id}}" class="layui-btn layui-btn-sm layui-bg-blue">编辑</a>
-										<button class="layui-btn layui-btn-sm layui-btn-danger" lay-on="delete-equipment" data-equipmentId={{=d.id}} data-equipmentName={{=d.name}}>删除</button>
-								  </div>`
+												<a href="/Equipment/Detail?id={{=d.id}}" class="layui-btn layui-btn-sm layui-bg-blue">编辑</a>
+												<button class="layui-btn layui-btn-sm layui-btn-danger" lay-on="delete-equipment" data-equipmentId={{=d.id}} data-equipmentName={{=d.name}}>删除</button>
+										  </div>`
 					},
 				]],
 				page: true,
@@ -136,21 +149,21 @@
 						console.log('取消')
 					});
 				},
-				"import-equipment": function() {
+				"import-equipment": function () {
 					var importDialogIndex = layer.open({
 						type: 1,
 						area: ['420px', '240px'], // 宽高
 						content: `
-								<div class="layui-form" style="margin: 16px;" enctype="multipart/form-data">
-									<div class="demo-login-container">
-										<div class="layui-form-item">
-											<input type="file" name="file" id="file-input" />
-										</div>
-										<div class="layui-form-item">
-											<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="import-btn">导入</button>
-										</div>
-									</div>
-								</div>`,
+										<div class="layui-form" style="margin: 16px;" enctype="multipart/form-data">
+											<div class="demo-login-container">
+												<div class="layui-form-item">
+													<input type="file" name="file" id="file-input" />
+												</div>
+												<div class="layui-form-item">
+													<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="import-btn">导入</button>
+												</div>
+											</div>
+										</div>`,
 						success: function () {
 
 							form.on('submit(import-btn)', function (data) {

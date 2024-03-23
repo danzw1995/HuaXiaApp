@@ -18,6 +18,7 @@ namespace HuaXia.Admin.Pages.Equipment
 		public List<EquipmentPartModel> EquipmentParts { get; set; }
 
 		public List<PlayerLevelModel> PlayerLevels { get; set; }
+		public List<EquipmentGradeModel> EquipmentGrades {  get; set; }
 
 		public CreateModel(IDatabaseData db, IWebHostEnvironment webHostEnvironment)
 		{
@@ -31,6 +32,7 @@ namespace HuaXia.Admin.Pages.Equipment
 			EquipmentParts = _db.GetEquipmentParts();
 
 			PlayerLevels = _db.GetPlayerLevels();
+			EquipmentGrades = _db.GetEquipmentGrades();
 		}
 
 		public IActionResult OnPost(IFormFile? file)
@@ -52,7 +54,7 @@ namespace HuaXia.Admin.Pages.Equipment
 					}
 					Equipment.Image = Path.Combine(@"\images\equipments\", fileName);
 
-				_db.CreateEquipment(Equipment.Name, Equipment.Description, Equipment.Image, Equipment.PlayerRoleId, Equipment.EquipmentPartId, Equipment.PlayerLevelId);
+				_db.CreateEquipment(Equipment.Name, Equipment.Description, Equipment.Image, Equipment.PlayerRoleId, Equipment.EquipmentPartId, Equipment.PlayerLevelId, Equipment.EquipmentGradeId);
 
 				return RedirectToPage("Index");
 			}
@@ -61,6 +63,8 @@ namespace HuaXia.Admin.Pages.Equipment
 			EquipmentParts = _db.GetEquipmentParts();
 
 			PlayerLevels = _db.GetPlayerLevels();
+			EquipmentGrades = _db.GetEquipmentGrades();
+
 			return Page();
 
 

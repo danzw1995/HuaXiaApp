@@ -20,10 +20,10 @@ namespace HuaXia.Admin.Controllers
 
 		// GET: api/Equipment/GetList
 		[HttpGet("GetList")]
-		public ActionResult<IEnumerable<EquipmentFullModel>> GetEquipments([FromQuery] int? playerRoleId, [FromQuery] int? equipmentPartId, [FromQuery] int? page = 1, [FromQuery] int? limit = 10)
+		public ActionResult<IEnumerable<EquipmentFullModel>> GetEquipments([FromQuery] int? playerRoleId, [FromQuery] int? equipmentPartId, [FromQuery] int? equipmentGradeId, [FromQuery] int? page = 1, [FromQuery] int? limit = 10)
 		{
 
-			List<EquipmentFullModel> equipments = _db.GetEquipments(playerRoleId, equipmentPartId, page, limit);
+			List<EquipmentFullModel> equipments = _db.GetEquipments(playerRoleId, equipmentPartId, equipmentGradeId, page, limit);
 
 			return Ok(equipments);
 		}
@@ -77,13 +77,14 @@ namespace HuaXia.Admin.Controllers
 						EquipmentPartId = (int)row.GetCell(nameDict[nameof(EquipmentModel.EquipmentPartId)]).NumericCellValue,
 						PlayerLevelId = (int)row.GetCell(nameDict[nameof(EquipmentModel.PlayerLevelId)]).NumericCellValue,
 						PlayerRoleId = (int)row.GetCell(nameDict[nameof(EquipmentModel.PlayerRoleId)]).NumericCellValue,
+						EquipmentGradeId = (int)row.GetCell(nameDict[nameof(EquipmentModel.EquipmentGradeId)]).NumericCellValue,
 					});
 
 				}
 				
 				foreach(EquipmentModel equipment in equipments)
 				{
-					_db.CreateEquipment(equipment.Name, equipment.Description, equipment.Image, equipment.PlayerRoleId, equipment.EquipmentPartId, equipment.PlayerLevelId);
+					_db.CreateEquipment(equipment.Name, equipment.Description, equipment.Image, equipment.PlayerRoleId, equipment.EquipmentPartId, equipment.PlayerLevelId, equipment.EquipmentGradeId);
 				}
 
 

@@ -35,9 +35,15 @@ namespace HuaXiaLibrary.Data
 
 		}
 
-		public List<EquipmentFullModel> GetEquipments(int? roleId = null, int? equipmentPartId = null, int? pageIndex = 1, int? pageSize = 10)
+		public List<EquipmentGradeModel> GetEquipmentGrades()
 		{
-			return _db.LoadData<EquipmentFullModel, dynamic>("dbo.spEquipments_Pagination", new { roleId, equipmentPartId, pageIndex, pageSize }, connectionStringName, true);
+			return _db.LoadData<EquipmentGradeModel, dynamic>("dbo.spEquipmentGrades_GetAll", new { }, connectionStringName, true);
+
+		}
+
+		public List<EquipmentFullModel> GetEquipments(int? roleId = null, int? equipmentPartId = null, int? equipmentGradeId = null, int? pageIndex = 1, int? pageSize = 10)
+		{
+			return _db.LoadData<EquipmentFullModel, dynamic>("dbo.spEquipments_Pagination", new { roleId, equipmentPartId, equipmentGradeId, pageIndex, pageSize }, connectionStringName, true);
 		}
 
 
@@ -51,17 +57,17 @@ namespace HuaXiaLibrary.Data
 			return _db.LoadData<EquipmentFullModel, dynamic>("dbo.spEquipments_GetEquipmentById", new { id }, connectionStringName, true).FirstOrDefault();
 		}
 
-		public void CreateEquipment(string name, string description, string image, int playerRoleId, int equipmentPartId, int playerLevelId )
+		public void CreateEquipment(string name, string description, string image, int playerRoleId, int equipmentPartId, int playerLevelId, int equipmentGradeId)
 		{
 			_db.SaveData("dbo.spEquipments_Create",
-				new { name, description, image, playerRoleId, equipmentPartId, playerLevelId },
+				new { name, description, image, playerRoleId, equipmentPartId, playerLevelId, equipmentGradeId },
 				connectionStringName,
 				true);
 		}
 		public void UpdateEquipment(EquipmentModel equipment)
 		{
 			_db.SaveData("dbo.spEquipments_Update",
-				new { id = equipment.Id, name = equipment.Name, description = equipment.Description, image = equipment.Image, playerRoleId = equipment.PlayerRoleId, playerLevelId = equipment.PlayerLevelId, equipmentPartId = equipment.EquipmentPartId },
+				new { id = equipment.Id, name = equipment.Name, description = equipment.Description, image = equipment.Image, playerRoleId = equipment.PlayerRoleId, playerLevelId = equipment.PlayerLevelId, equipmentPartId = equipment.EquipmentPartId, equipmentGradeId = equipment.EquipmentGradeId },
 				connectionStringName,
 				true);
 		}
