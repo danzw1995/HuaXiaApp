@@ -46,6 +46,42 @@ namespace HuaXia.Admin.Controllers
 			try
 			{
 
+				List<EquipmentPartModel> equipmentParts = _db.GetEquipmentParts();
+
+				List<PlayerRoleModel> playerRoles = _db.GetAllPlayerRoles();
+
+				List<PlayerLevelModel> playerLevels = _db.GetPlayerLevels();
+				List<EquipmentGradeModel> equipmentGrades = _db.GetEquipmentGrades();
+
+				Dictionary<string, int> equipmentPartDict = new Dictionary<string, int>();
+
+				foreach(var part in  equipmentParts)
+				{
+					equipmentPartDict[part.Name] = part.Id;
+				}
+
+				Dictionary<string, int> playerRoleDict = new Dictionary<string, int>();
+
+				foreach (var role in playerRoles)
+				{
+					playerRoleDict[role.Name] = role.Id;
+				}
+
+				Dictionary<string, int> playerLevelDict = new Dictionary<string, int>();
+
+				foreach (var level in playerLevels)
+				{
+					playerLevelDict[level.Level.ToString()] = level.Id;
+				}
+
+				Dictionary<string, int> equipmentGradeDict = new Dictionary<string, int>();
+
+				foreach (var grade in equipmentGrades)
+				{
+					equipmentGradeDict[grade.Grade.ToString()] = grade.Id;
+				}
+
+
 				IWorkbook workbook = new XSSFWorkbook(file.OpenReadStream());
 
 				ISheet sheet = workbook.GetSheetAt(0);
@@ -54,35 +90,26 @@ namespace HuaXia.Admin.Controllers
 
 				IRow headerRow = sheet.GetRow(0);
 
-				Dictionary<string, int> nameDict = new Dictionary<string, int>();
-				
-				for(int i =0; i < headerRow.Cells.Count; i ++)
-				{
-					string name = headerRow.GetCell(i).StringCellValue;
+	
 
-					nameDict.Add(name, i);
-					
-				}
-
-
-				for (int i = 1; i <= sheet.LastRowNum; i ++)
+				for (int i = 1; i <= sheet.LastRowNum; i++)
 				{
 					IRow row = sheet.GetRow(i);
 
 					equipments.Add(new EquipmentModel
 					{
-						Name = row.GetCell(nameDict[nameof(EquipmentModel.Name)]).StringCellValue,
-						Description = row.GetCell(nameDict[nameof(EquipmentModel.Description)]).StringCellValue,
-						Image = row.GetCell(nameDict[nameof(EquipmentModel.Image)]).StringCellValue,
-						EquipmentPartId = (int)row.GetCell(nameDict[nameof(EquipmentModel.EquipmentPartId)]).NumericCellValue,
-						PlayerLevelId = (int)row.GetCell(nameDict[nameof(EquipmentModel.PlayerLevelId)]).NumericCellValue,
-						PlayerRoleId = (int)row.GetCell(nameDict[nameof(EquipmentModel.PlayerRoleId)]).NumericCellValue,
-						EquipmentGradeId = (int)row.GetCell(nameDict[nameof(EquipmentModel.EquipmentGradeId)]).NumericCellValue,
+						Name = row.GetCell(0).ToString(),
+						Description = row.GetCell(1).ToString(),
+						Image = row.GetCell(2).ToString(),
+						EquipmentPartId = equipmentPartDict[row.GetCell(3).ToString()],
+						PlayerLevelId = playerLevelDict[row.GetCell(4).ToString()],
+						PlayerRoleId = playerRoleDict[row.GetCell(5).ToString()],
+						EquipmentGradeId = equipmentGradeDict[row.GetCell(6).ToString()],
 					});
 
 				}
-				
-				foreach(EquipmentModel equipment in equipments)
+
+				foreach (EquipmentModel equipment in equipments)
 				{
 					_db.CreateEquipment(equipment.Name, equipment.Description, equipment.Image, equipment.PlayerRoleId, equipment.EquipmentPartId, equipment.PlayerLevelId, equipment.EquipmentGradeId);
 				}
@@ -90,11 +117,12 @@ namespace HuaXia.Admin.Controllers
 
 				return Ok("success");
 
-			} catch (Exception)
+			}
+			catch (Exception)
 			{
 				throw;
 			}
-			
+
 		}
 		// GET: api/Equipment/Export
 		[HttpGet("Export")]
@@ -107,27 +135,27 @@ namespace HuaXia.Admin.Controllers
 			ISheet sheet = workbook.CreateSheet("Equipment");
 
 			IRow headerRow = sheet.CreateRow(0);
-			headerRow.CreateCell(0).SetCellValue(nameof(EquipmentFullModel.Name));
-			headerRow.CreateCell(1).SetCellValue(nameof(EquipmentFullModel.Description));
-			headerRow.CreateCell(2).SetCellValue(nameof(EquipmentFullModel.Image));
-			headerRow.CreateCell(3).SetCellValue(nameof(EquipmentFullModel.EquipmentPartId));
-			headerRow.CreateCell(4).SetCellValue(nameof(EquipmentFullModel.PlayerLevelId));
-			headerRow.CreateCell(5).SetCellValue(nameof(EquipmentFullModel.PlayerRoleId));
-			headerRow.CreateCell(5).SetCellValue(nameof(EquipmentFullModel.EquipmentGradeId));
+			headerRow.CreateCell(0).SetCellValue("名称");
+			headerRow.CreateCell(1).SetCellValue("描述");
+			headerRow.CreateCell(2).SetCellValue("图片");
+			headerRow.CreateCell(3).SetCellValue("部位");
+			headerRow.CreateCell(4).SetCellValue("等级");
+			headerRow.CreateCell(5).SetCellValue("职业");
+			headerRow.CreateCell(6).SetCellValue("档次");
 
-			for(int i = 0;i < equipments.Count; i ++)
+			for (int i = 0; i < equipments.Count; i++)
 			{
 				IRow row = sheet.CreateRow(i + 1);
 				row.CreateCell(0).SetCellValue(equipments[i].Name);
 				row.CreateCell(1).SetCellValue(equipments[i].Description);
 				row.CreateCell(2).SetCellValue(equipments[i].Image);
-				row.CreateCell(3).SetCellValue(equipments[i].EquipmentPartId);
-				row.CreateCell(4).SetCellValue(equipments[i].PlayerLevelId);
-				row.CreateCell(5).SetCellValue(equipments[i].PlayerRoleId);
-				row.CreateCell(5).SetCellValue(equipments[i].EquipmentGradeId);
+				row.CreateCell(3).SetCellValue(equipments[i].EquipmentPartName);
+				row.CreateCell(4).SetCellValue(equipments[i].Level);
+				row.CreateCell(5).SetCellValue(equipments[i].PlayerRoleName);
+				row.CreateCell(6).SetCellValue(equipments[i].Grade);
 
 			}
-			using (var memoryStream = new  MemoryStream())
+			using (var memoryStream = new MemoryStream())
 			{
 				workbook.Write(memoryStream);
 				return File(memoryStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "equipment.xlsx");
