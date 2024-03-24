@@ -193,6 +193,24 @@
 						}
 
 					})
+				},
+				"export-equipment": function () {
+					$.ajax({
+						method: "GET",
+						url: "/api/Equipment/Export",
+						xhrFields: {
+							responseType: 'blob'
+						},
+						success: function (blob) {
+							const file = new File([blob], 'equipment.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+							const downloadLink = document.createElement('a');
+							downloadLink.href = URL.createObjectURL(file);
+							downloadLink.download = 'equipment.xlsx';
+							downloadLink.click();
+
+						} 
+					})
 				}
 			})
 

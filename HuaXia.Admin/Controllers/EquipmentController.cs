@@ -95,8 +95,43 @@ namespace HuaXia.Admin.Controllers
 				throw;
 			}
 			
+		}
+		// GET: api/Equipment/Export
+		[HttpGet("Export")]
+		public ActionResult exportEquipment()
+		{
 
-			
+			List<EquipmentFullModel> equipments = _db.SearchEquipmentsByRoleAndEquipmentPart(null, null);
+
+			IWorkbook workbook = new XSSFWorkbook();
+			ISheet sheet = workbook.CreateSheet("Equipment");
+
+			IRow headerRow = sheet.CreateRow(0);
+			headerRow.CreateCell(0).SetCellValue(nameof(EquipmentFullModel.Name));
+			headerRow.CreateCell(1).SetCellValue(nameof(EquipmentFullModel.Description));
+			headerRow.CreateCell(2).SetCellValue(nameof(EquipmentFullModel.Image));
+			headerRow.CreateCell(3).SetCellValue(nameof(EquipmentFullModel.EquipmentPartId));
+			headerRow.CreateCell(4).SetCellValue(nameof(EquipmentFullModel.PlayerLevelId));
+			headerRow.CreateCell(5).SetCellValue(nameof(EquipmentFullModel.PlayerRoleId));
+			headerRow.CreateCell(5).SetCellValue(nameof(EquipmentFullModel.EquipmentGradeId));
+
+			for(int i = 0;i < equipments.Count; i ++)
+			{
+				IRow row = sheet.CreateRow(i + 1);
+				row.CreateCell(0).SetCellValue(equipments[i].Name);
+				row.CreateCell(1).SetCellValue(equipments[i].Description);
+				row.CreateCell(2).SetCellValue(equipments[i].Image);
+				row.CreateCell(3).SetCellValue(equipments[i].EquipmentPartId);
+				row.CreateCell(4).SetCellValue(equipments[i].PlayerLevelId);
+				row.CreateCell(5).SetCellValue(equipments[i].PlayerRoleId);
+				row.CreateCell(5).SetCellValue(equipments[i].EquipmentGradeId);
+
+			}
+			using (var memoryStream = new  MemoryStream())
+			{
+				workbook.Write(memoryStream);
+				return File(memoryStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "equipment.xlsx");
+			}
 		}
 
 
